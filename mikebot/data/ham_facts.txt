@@ -1,0 +1,51 @@
+Amateur radio operators are licensed by the FCC in the US across three license classes: Technician, General, and Amateur Extra.
+The first transatlantic radio transmission was made by Guglielmo Marconi on December 12, 1901.
+Ham radio operators provided critical communications after Hurricane Katrina when commercial infrastructure failed.
+The ARRL (American Radio Relay League) was founded in 1914 and is the largest amateur radio organization in the US.
+Ham radio is licensed in virtually every country in the world, with over 3 million operators globally.
+The phonetic alphabet used in ham radio - Alpha Bravo Charlie - was standardized by NATO in 1956.
+CQ is the general call used to invite any station to respond. It comes from the French word securite.
+73 means best regards in ham radio. It originated from the Phillips Code used by telegraph operators in the 1800s.
+88 means love and kisses in ham radio. It is traditionally sent at the end of a conversation with a close friend.
+The first amateur radio satellite, OSCAR 1, was launched on December 12, 1961 - just 4 years after Sputnik.
+Morse code was invented by Samuel Morse and Alfred Vail in the 1830s and is still used by ham operators today.
+The 2-meter band (144-148 MHz) is the most popular VHF amateur band for local and regional communications.
+A Maidenhead grid square locator divides the world into a grid system used universally by ham operators.
+The W1AW station at ARRL headquarters in Newington, CT has been operating since 1938.
+Amateur radio operators were first called hams as a derogatory term by professional telegraph operators - then it was adopted proudly.
+HF (high frequency) bands from 3-30 MHz can bounce signals off the ionosphere to reach thousands of miles.
+The K-index measures geomagnetic storm intensity. High K-index means poor HF propagation but possible aurora.
+Solar flux index (SFI) measures solar radio emissions at 10.7cm. Higher SFI means better HF propagation.
+Elmer is the affectionate ham radio term for an experienced operator who mentors newcomers.
+The minimum age to get a ham radio license in the US is any age - there is no minimum age requirement.
+Field Day is held on the last full weekend of June each year and is the most popular ham radio event in North America.
+The International Space Station has amateur radio equipment aboard and astronauts regularly contact schools.
+APRS (Automatic Packet Reporting System) uses packet radio to transmit GPS position and other data.
+Echolink connects amateur radio stations over the internet, allowing worldwide contacts via VoIP.
+Winlink is a global email system for ham operators that works over HF, VHF, and satellite links.
+The fox hunt is a popular amateur radio activity where participants use direction-finding equipment to locate a hidden transmitter.
+Amateur Extra class licensees have access to all amateur radio bands and privileges in the US.
+The Technician license is the entry-level US ham license and grants full VHF/UHF privileges.
+A repeater receives a signal on one frequency and retransmits it on another, extending communication range.
+The term rubber duck refers to the short flexible antenna commonly used with handheld radios.
+QRP operation means running low power - typically 5 watts or less. QRP operators pride themselves on long-distance contacts with minimal power.
+The ionosphere has multiple layers (D, E, F1, F2) that reflect radio waves back to Earth for long-distance communication.
+Skywarn is a network of trained ham radio operators who report severe weather to the National Weather Service.
+The hobby of amateur radio includes CW (Morse), phone (voice), digital modes, satellite, moonbounce (EME), and more.
+Moonbounce or EME (Earth-Moon-Earth) involves bouncing radio signals off the Moon's surface to communicate.
+The POTA (Parks on the Air) program encourages ham operators to operate from national and state parks.
+A beam antenna (Yagi) focuses radio energy in one direction for stronger signals than an omnidirectional antenna.
+The longest confirmed QSO (contact) distance is Earth to the Moon and back - about 800,000 km round trip.
+DX means distance in ham radio. Working DX means making contacts with stations far away or in rare locations.
+The Most Wanted DXCC list tracks rare entities that few hams have confirmed. Bouvet Island is often #1.
+A contest in ham radio involves making as many contacts as possible within a set time period for points.
+The DXCC (DX Century Club) award requires confirmed contacts with 100 different DXCC entities worldwide.
+Ham radio played a key role in coordinating relief efforts after the 2011 Tohoku earthquake in Japan.
+The CW (continuous wave) Morse code mode can copy signals 10-15 dB weaker than voice modes.
+Every licensed amateur radio operator in the US has their callsign, name, and address in a public FCC database.
+The ham radio community uses phonetic alphabets, Q-codes, and RST reports (readability, strength, tone) for standardized communication.
+DMR (Digital Mobile Radio) is a popular digital voice mode used on VHF/UHF repeaters and simplex channels.
+FT8 is a digital weak-signal mode developed by Joe Taylor K1JT that can make contacts with extremely low power.
+The world record for the longest ham radio contact without repeater or internet assistance is over 22,000 km.
+Handheld transceivers (HTs) like the Baofeng UV-5R have introduced millions of new operators to amateur radio.
+The term YL means young lady and refers to any female operator regardless of age. OM means old man for male operators.
