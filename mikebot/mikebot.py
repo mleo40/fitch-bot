@@ -65,81 +65,66 @@ def load_data(filename: str) -> list[str]:
 # Sync command handlers
 # ---------------------------------------------------------------------------
 
-def cmd_version(arg="") -> str:
-    return f"Fitchbot v{BOT_VERSION} | {datetime.now().strftime('%Y-%m-%d')} | Fitchburg Mesh"
 
-def cmd_df(arg="") -> str:
-    result = subprocess.run(
-        ["df", "-h", "--output=target,size,used,avail,pcent"],
-        capture_output=True, text=True, timeout=10
-    )
-    return result.stdout.strip() if result.returncode == 0 else f"Error: {result.stderr.strip()}"
+# ---------------------------------------------------------------------------
+# Data tables
+# ---------------------------------------------------------------------------
 
-def cmd_uptime(arg="") -> str:
-    result = subprocess.run(["uptime", "-p"], capture_output=True, text=True, timeout=10)
-    return result.stdout.strip() if result.returncode == 0 else f"Error: {result.stderr.strip()}"
+# Q-code reference table
+Q_CODES = {
+    "QRA": "What is the name of your station?",
+    "QRB": "How far are you from my station?",
+    "QRG": "What is my exact frequency?",
+    "QRH": "Does my frequency vary?",
+    "QRI": "How is the tone of my transmission?",
+    "QRK": "What is the intelligibility of my signals?",
+    "QRL": "Are you busy? / I am busy.",
+    "QRM": "Are you being interfered with? / Interference from other stations.",
+    "QRN": "Are you troubled by static? / Troubled by static.",
+    "QRO": "Shall I increase transmitter power?",
+    "QRP": "Shall I decrease power? / Low power operation.",
+    "QRQ": "Shall I send faster?",
+    "QRS": "Shall I send more slowly?",
+    "QRT": "Shall I stop sending? / Shutting down.",
+    "QRU": "Have you anything for me? / Nothing for you.",
+    "QRV": "Are you ready? / I am ready.",
+    "QRX": "When will you call again? / Stand by.",
+    "QRZ": "Who is calling me?",
+    "QSB": "Are my signals fading?",
+    "QSK": "Can you hear between my signals? / Break-in operation.",
+    "QSL": "Can you acknowledge receipt? / I confirm receipt.",
+    "QSO": "Can you communicate with me? / A contact between two stations.",
+    "QSP": "Will you relay to another station?",
+    "QST": "General call to all amateur stations.",
+    "QSX": "Will you listen on another frequency?",
+    "QSY": "Shall I change frequency?",
+    "QTH": "What is your location? / My location is...",
+    "QTR": "What is the exact time?",
+}
 
-def cmd_top(arg="") -> str:
-    result = subprocess.run(["top", "-bn1"], capture_output=True, text=True, timeout=10)
-    if result.returncode != 0:
-        return f"Error: {result.stderr.strip()}"
-    return "\n".join(result.stdout.splitlines()[:5]).strip()
 
-def cmd_fitchfact(arg="") -> str:
-    return random.choice(load_data("fitchburg_facts.txt"))
 
-def cmd_hello(arg="") -> str:
-    return random.choice(load_data("hello_responses.txt"))
+# Amateur band plan (US)
+BAND_PLAN = [
+    (1800, 2000, "160m"),
+    (3500, 4000, "80m"),
+    (5330, 5405, "60m"),
+    (7000, 7300, "40m"),
+    (10100, 10150, "30m"),
+    (14000, 14350, "20m"),
+    (18068, 18168, "17m"),
+    (21000, 21450, "15m"),
+    (24890, 24990, "12m"),
+    (28000, 29700, "10m"),
+    (50000, 54000, "6m"),
+    (144000, 148000, "2m"),
+    (222000, 225000, "1.25m"),
+    (420000, 450000, "70cm"),
+    (902000, 928000, "33cm"),
+    (1240000, 1300000, "23cm"),
+]
 
-def cmd_joke(arg="") -> str:
-    return random.choice(load_data("jokes.txt"))
 
-def cmd_quote(arg="") -> str:
-    return random.choice(load_data("quotes.txt"))
-
-def cmd_catfact(arg="") -> str:
-    return random.choice(load_data("cat_facts.txt"))
-
-def cmd_dogfact(arg="") -> str:
-    return random.choice(load_data("dog_facts.txt"))
-
-def cmd_trivia(arg="") -> str:
-    return random.choice(load_data("trivia.txt"))
-
-def cmd_secret(arg="") -> str:
-    return random.choice(load_data("secrets.txt"))
-
-def cmd_startrek(arg="") -> str:
-    return random.choice(load_data("startrek_trivia.txt"))
-
-def cmd_starwars(arg="") -> str:
-    return random.choice(load_data("starwars_trivia.txt"))
-
-def cmd_futurama(arg="") -> str:
-    return random.choice(load_data("futurama_trivia.txt"))
-
-def cmd_simpsons(arg="") -> str:
-    return random.choice(load_data("simpsons_trivia.txt"))
-
-def cmd_roll(arg="") -> str:
-    spec = arg.strip().lower() or "1d6"
-    m = re.fullmatch(r"(\d+)d(\d+)", spec)
-    if not m:
-        return "Usage: !roll NdN (e.g. !roll 2d6)"
-    num, sides = int(m.group(1)), int(m.group(2))
-    if num < 1 or num > 20 or sides < 2 or sides > 100:
-        return "Roll limits: 1-20 dice, 2-100 sides."
-    rolls = [random.randint(1, sides) for _ in range(num)]
-    total = sum(rolls)
-    detail = "+".join(str(r) for r in rolls) if num > 1 else str(total)
-    return f"Roll {spec}: {detail} = {total}" if num > 1 else f"Roll {spec}: {total}"
-
-def cmd_help(arg="") -> str:
-    return (
-        "!df !uptime !top !wxf !wxc !alerts "
-        "!fitchfact !hello !joke !quote !catfact !dogfact "
-        "!trivia !startrek !starwars !futurama !simpsons !roll !remind !ping !help"
-    )
 
 # ---------------------------------------------------------------------------
 # Weather helpers (shared by !wxf, !wxc, !alerts)
@@ -159,27 +144,10 @@ def _get_latlon(zipcode: str) -> tuple[float, float]:
     place = data["places"][0]
     return float(place["latitude"]), float(place["longitude"])
 
-def cmd_wxf(arg="") -> str:
-    zipcode = arg.strip() or "01420"
-    try:
-        data = _fetch_wttr(zipcode)
-        c = data["current_condition"][0]
-        desc = c["weatherDesc"][0]["value"]
-        return (f"{zipcode} | {desc} | {c['temp_F']}F | "
-                f"Precip: {c['precipInches']}\" | {c['pressure']} hPa")
-    except Exception as exc:
-        return f"Weather lookup failed: {exc}"
 
-def cmd_wxc(arg="") -> str:
-    zipcode = arg.strip() or "01420"
-    try:
-        data = _fetch_wttr(zipcode)
-        c = data["current_condition"][0]
-        desc = c["weatherDesc"][0]["value"]
-        return (f"{zipcode} | {desc} | {c['temp_C']}C | "
-                f"Precip: {c['precipMM']}mm | {c['pressure']} hPa")
-    except Exception as exc:
-        return f"Weather lookup failed: {exc}"
+# ---------------------------------------------------------------------------
+# Sync command handlers (alphabetical)
+# ---------------------------------------------------------------------------
 
 def cmd_alerts_sync(zipcode: str) -> str:
     """Fetch active NOAA weather alerts for a zip code."""
@@ -199,33 +167,320 @@ def cmd_alerts_sync(zipcode: str) -> str:
     except Exception as exc:
         return f"Alerts lookup failed: {exc}"
 
+def cmd_band(arg="") -> str:
+    freq_str = arg.strip().replace(",", "")
+    if not freq_str:
+        return "Usage: !band <freq in MHz> e.g. !band 146.52"
+    try:
+        freq_mhz = float(freq_str)
+        freq_khz = int(freq_mhz * 1000)
+        for lo, hi, name in BAND_PLAN:
+            if lo <= freq_khz <= hi:
+                return f"{freq_mhz} MHz is in the {name} amateur band."
+        return f"{freq_mhz} MHz is not in a US amateur band."
+    except ValueError:
+        return "Usage: !band <freq in MHz> e.g. !band 146.52"
+
+
+def cmd_callsign(arg="") -> str:
+    call = arg.strip().upper()
+    if not call:
+        return "Usage: !callsign <call> e.g. !callsign W1AW"
+    try:
+        url = f"https://callook.info/{urllib.request.quote(call)}/json"
+        req = urllib.request.Request(url, headers={"User-Agent": "meshbot/1.0"})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.loads(r.read())
+        if data.get("status") != "VALID":
+            return f"{call}: Not found or invalid callsign."
+        name = data.get("name", "Unknown")
+        addr = data.get("address", {})
+        loc = addr.get("line2", "")
+        lic_type = data.get("type", "")
+        op_class = data.get("current", {}).get("operClass", "")
+        cls = f" ({op_class})" if op_class else ""
+        return f"{call}{cls}: {name} - {loc} [{lic_type}]"
+    except Exception as exc:
+        return f"Callsign lookup failed: {exc}"
+
+
+def cmd_catfact(arg="") -> str:
+    return random.choice(load_data("cat_facts.txt"))
+
+
+def cmd_df(arg="") -> str:
+    result = subprocess.run(
+        ["df", "-h", "--output=target,size,used,avail,pcent"],
+        capture_output=True, text=True, timeout=10
+    )
+    return result.stdout.strip() if result.returncode == 0 else f"Error: {result.stderr.strip()}"
+
+
+def cmd_dogfact(arg="") -> str:
+    return random.choice(load_data("dog_facts.txt"))
+
+
+def cmd_fitchfact(arg="") -> str:
+    return random.choice(load_data("fitchburg_facts.txt"))
+
+
+def cmd_futurama(arg="") -> str:
+    return random.choice(load_data("futurama_trivia.txt"))
+
+
+def cmd_hamfact(arg="") -> str:
+    return random.choice(load_data("ham_facts.txt"))
+
+
+def cmd_hello(arg="") -> str:
+    return random.choice(load_data("hello_responses.txt"))
+
+
+def cmd_joke(arg="") -> str:
+    return random.choice(load_data("jokes.txt"))
+
+
+def cmd_lotr(arg="") -> str:
+    return random.choice(load_data("lotr_trivia.txt"))
+
+
+def cmd_onthisday(arg="") -> str:
+    try:
+        from datetime import datetime
+        now = datetime.now()
+        url = (f"https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/"
+               f"{now.month}/{now.day}")
+        req = urllib.request.Request(url, headers={"User-Agent": "meshbot/1.0"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read().decode())
+        events = data.get("events", [])
+        if not events:
+            return "No events found for today."
+        e = random.choice(events)
+        return f"{e['year']}: {e['text']}"
+    except Exception as exc:
+        return f"On This Day lookup failed: {exc}"
+
+def cmd_prop(arg="") -> str:
+    try:
+        req = urllib.request.Request(
+            "https://services.swpc.noaa.gov/json/f107_cm_flux.json",
+            headers={"User-Agent": "meshbot/1.0"}
+        )
+        with urllib.request.urlopen(req, timeout=10) as r:
+            sfi_data = json.loads(r.read())
+        sfi = sfi_data[-1]["flux"]
+
+        req2 = urllib.request.Request(
+            "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
+            headers={"User-Agent": "meshbot/1.0"}
+        )
+        with urllib.request.urlopen(req2, timeout=10) as r:
+            kdata = json.loads(r.read())
+        kp = float(kdata[-1]["Kp"])
+
+        def band_cond(lo_sfi, hi_sfi, storm_ok=True):
+            if kp >= 5 and not storm_ok:
+                return "Poor"
+            if sfi >= hi_sfi:
+                return "Good"
+            if sfi >= lo_sfi:
+                return "Fair"
+            return "Poor"
+
+        return "\n".join([
+            f"HF Prop (SFI={sfi:.0f} Kp={kp:.1f}):",
+            f"80m={band_cond(70,90)}",
+            f"40m={band_cond(80,100)}",
+            f"20m={band_cond(100,120)}",
+            f"15m={band_cond(120,150)}",
+            f"10m={band_cond(150,180)}",
+        ])
+    except Exception as exc:
+        return f"Propagation lookup failed: {exc}"
+
+def cmd_q(arg="") -> str:
+    code = arg.strip().upper()
+    if not code:
+        return "Usage: !q <code> e.g. !q QTH"
+    if code in Q_CODES:
+        return f"{code}: {Q_CODES[code]}"
+    return f"Unknown Q-code: {code}. Try QTH, QSL, QRM, QRP, QRT, QRZ, QSO, QST..."
+
+def cmd_quote(arg="") -> str:
+    return random.choice(load_data("quotes.txt"))
+
+
+def cmd_roll(arg="") -> str:
+    spec = arg.strip().lower() or "1d6"
+    m = re.fullmatch(r"(\d+)d(\d+)", spec)
+    if not m:
+        return "Usage: !roll NdN (e.g. !roll 2d6)"
+    num, sides = int(m.group(1)), int(m.group(2))
+    if num < 1 or num > 20 or sides < 2 or sides > 100:
+        return "Roll limits: 1-20 dice, 2-100 sides."
+    rolls = [random.randint(1, sides) for _ in range(num)]
+    total = sum(rolls)
+    detail = "+".join(str(r) for r in rolls) if num > 1 else str(total)
+    return f"Roll {spec}: {detail} = {total}" if num > 1 else f"Roll {spec}: {total}"
+
+def cmd_secret(arg="") -> str:
+    return random.choice(load_data("secrets.txt"))
+
+
+def cmd_simpsons(arg="") -> str:
+    return random.choice(load_data("simpsons_trivia.txt"))
+
+
+def cmd_solar(arg="") -> str:
+    try:
+        req = urllib.request.Request(
+            "https://services.swpc.noaa.gov/json/f107_cm_flux.json",
+            headers={"User-Agent": "meshbot/1.0"}
+        )
+        with urllib.request.urlopen(req, timeout=10) as r:
+            sfi_data = json.loads(r.read())
+        sfi = sfi_data[-1]["flux"]
+
+        req2 = urllib.request.Request(
+            "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
+            headers={"User-Agent": "meshbot/1.0"}
+        )
+        with urllib.request.urlopen(req2, timeout=10) as r:
+            kdata = json.loads(r.read())
+        kp = float(kdata[-1]["Kp"])
+
+        if sfi >= 150:
+            prop = "Excellent"
+        elif sfi >= 120:
+            prop = "Good"
+        elif sfi >= 100:
+            prop = "Fair"
+        else:
+            prop = "Poor"
+
+        if kp >= 5:
+            geo = f"Storm (Kp={kp:.1f})"
+        elif kp >= 3:
+            geo = f"Unsettled (Kp={kp:.1f})"
+        else:
+            geo = f"Quiet (Kp={kp:.1f})"
+
+        return f"Solar: SFI={sfi:.0f} ({prop}) | Geomag: {geo}"
+    except Exception as exc:
+        return f"Solar lookup failed: {exc}"
+
+def cmd_space(arg="") -> str:
+    return random.choice(load_data("space_trivia.txt"))
+
+
+def cmd_startrek(arg="") -> str:
+    return random.choice(load_data("startrek_trivia.txt"))
+
+
+def cmd_starwars(arg="") -> str:
+    return random.choice(load_data("starwars_trivia.txt"))
+
+
+def cmd_sun(arg="") -> str:
+    try:
+        lat, lon = _get_latlon(arg.strip() or "01420")
+        url = f"https://api.sunrise-sunset.org/json?lat={lat}&lng={lon}&formatted=0"
+        req = urllib.request.Request(url, headers={"User-Agent": "meshbot/1.0"})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.loads(r.read())
+        from datetime import timezone
+        def utc_to_local(s):
+            dt = datetime.fromisoformat(s.replace("+00:00", "").rstrip("Z"))
+            dt = dt.replace(tzinfo=timezone.utc).astimezone()
+            return dt.strftime("%H:%M")
+        res = data["results"]
+        return (f"Sun for {arg.strip() or '01420'}: "
+                f"Rise {utc_to_local(res['sunrise'])} | "
+                f"Set {utc_to_local(res['sunset'])} | "
+                f"Solar noon {utc_to_local(res['solar_noon'])}")
+    except Exception as exc:
+        return f"Sunrise lookup failed: {exc}"
+
+def cmd_top(arg="") -> str:
+    result = subprocess.run(["top", "-bn1"], capture_output=True, text=True, timeout=10)
+    if result.returncode != 0:
+        return f"Error: {result.stderr.strip()}"
+    return "\n".join(result.stdout.splitlines()[:5]).strip()
+
+
+def cmd_trivia(arg="") -> str:
+    return random.choice(load_data("trivia.txt"))
+
+
+def cmd_uptime(arg="") -> str:
+    result = subprocess.run(["uptime", "-p"], capture_output=True, text=True, timeout=10)
+    return result.stdout.strip() if result.returncode == 0 else f"Error: {result.stderr.strip()}"
+
+
+def cmd_version(arg="") -> str:
+    return f"Fitchbot v{BOT_VERSION} | {datetime.now().strftime('%Y-%m-%d')} | Fitchburg Mesh"
+
+
+def cmd_wxc(arg="") -> str:
+    zipcode = arg.strip() or "01420"
+    try:
+        data = _fetch_wttr(zipcode)
+        c = data["current_condition"][0]
+        desc = c["weatherDesc"][0]["value"]
+        return (f"{zipcode} | {desc} | {c['temp_C']}C | "
+                f"Precip: {c['precipMM']}mm | {c['pressure']} hPa")
+    except Exception as exc:
+        return f"Weather lookup failed: {exc}"
+
+def cmd_wxf(arg="") -> str:
+    zipcode = arg.strip() or "01420"
+    try:
+        data = _fetch_wttr(zipcode)
+        c = data["current_condition"][0]
+        desc = c["weatherDesc"][0]["value"]
+        return (f"{zipcode} | {desc} | {c['temp_F']}F | "
+                f"Precip: {c['precipInches']}\" | {c['pressure']} hPa")
+    except Exception as exc:
+        return f"Weather lookup failed: {exc}"
+
 # ---------------------------------------------------------------------------
-# COMMANDS dict (sync handlers only)
+# COMMANDS dict (alphabetical by trigger)
 # ---------------------------------------------------------------------------
 
 COMMANDS = {
-    "!ver":      cmd_version,
-    "!df":       cmd_df,
-    "!uptime":   cmd_uptime,
-    "!top":      cmd_top,
-    "!wxf":      cmd_wxf,
-    "!wxc":      cmd_wxc,
-    "!fitchfact":cmd_fitchfact,
-    "!catfact":  cmd_catfact,
-    "!dogfact":  cmd_dogfact,
-    "!trivia":   cmd_trivia,
-    "!startrek": cmd_startrek,
-    "!starwars": cmd_starwars,
-    "!futurama": cmd_futurama,
-    "!simpsons": cmd_simpsons,
-    "!joke":     cmd_joke,
-    "!quote":    cmd_quote,
-    "!hello":    cmd_hello,
-    "!roll":     cmd_roll,
-    "!ping":     lambda arg="": "PONG!",
-    "!secret":   cmd_secret,
-    "!help":     cmd_help,
+    "!band":      cmd_band,
+    "!callsign":  cmd_callsign,
+    "!catfact":   cmd_catfact,
+    "!df":        cmd_df,
+    "!dogfact":   cmd_dogfact,
+    "!fitchfact": cmd_fitchfact,
+    "!futurama":  cmd_futurama,
+    "!hamfact":   cmd_hamfact,
+    "!hello":     cmd_hello,
+    "!joke":      cmd_joke,
+    "!lotr":      cmd_lotr,
+    "!onthisday": cmd_onthisday,
+    "!ping":      lambda arg="": "PONG!",
+    "!prop":      cmd_prop,
+    "!q":         cmd_q,
+    "!quote":     cmd_quote,
+    "!roll":      cmd_roll,
+    "!secret":    cmd_secret,
+    "!simpsons":  cmd_simpsons,
+    "!solar":     cmd_solar,
+    "!space":     cmd_space,
+    "!startrek":  cmd_startrek,
+    "!starwars":  cmd_starwars,
+    "!sun":       cmd_sun,
+    "!top":       cmd_top,
+    "!trivia":    cmd_trivia,
+    "!uptime":    cmd_uptime,
+    "!ver":       cmd_version,
+    "!wxc":       cmd_wxc,
+    "!wxf":       cmd_wxf,
 }
+
 
 # ---------------------------------------------------------------------------
 # Channel discovery
@@ -316,6 +571,21 @@ async def run_bot(port: str, baud: int, channel_override: int | None = None) -> 
 
         # --- Async special commands ---
 
+        if text.lower().startswith("!help"):
+            await asyncio.sleep(3)
+            await send_reply(
+                "!df !uptime !top !wxf !wxc !alerts "
+                "!fitchfact !hello !joke !quote !catfact !dogfact "
+                "!trivia !startrek !starwars !futurama !simpsons"
+            )
+            await asyncio.sleep(5)
+            await send_reply(
+                "!lotr !space !onthisday !hamfact "
+                "!q !band !solar !prop !sun !callsign "
+                "!roll !remind !ping !help"
+            )
+            return
+
         if text.lower().startswith("!alerts"):
             zipcode = text[7:].strip() or "01420"
             loop = asyncio.get_event_loop()
@@ -402,4 +672,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
