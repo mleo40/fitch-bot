@@ -1,0 +1,3 @@
+Fitchburg, MA  -  Weather updated manually.
+Temp: -- degF | Conditions: --
+Update this file with current conditions.

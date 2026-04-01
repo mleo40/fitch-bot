@@ -1,0 +1,12 @@
+146.520 MHz FM  -  National 2m Simplex Calling Frequency
+146.955 MHz FM  -  W1MHL Fitchburg (PL 67.0 Hz)
+147.390 MHz FM  -  W1BIM Paxton (PL 136.5 Hz)
+146.640 MHz FM  -  W1MA Worcester (PL 146.2 Hz)
+147.225 MHz FM  -  W1KSZ Leominster (PL 67.0 Hz)
+443.100 MHz FM  -  N1SWZ 70cm Fitchburg (PL 67.0 Hz)
+462.675 MHz FM  -  FRS/GMRS Channel 1 (National Calling)
+462.550 MHz FM  -  FRS/GMRS Channel 2
+151.940 MHz FM  -  MEMA State Emergency Ops
+155.340 MHz FM  -  Worcester County Fire Mutual Aid
+162.550 MHz WX  -  NOAA Weather Radio KHB49 (Primary)
+162.400 MHz WX  -  NOAA Weather Radio KEC83 (Alt)
